@@ -1,0 +1,38 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Страница не найдена</title><meta name="description" content="Такой страницы нет — вернитесь на главную."><link rel="canonical" href="https://mi-decor.art/404"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta property="og:type" content="website"><meta property="og:site_name" content="Мы.Decor"><meta property="og:title" content="Страница не найдена"><meta property="og:description" content="Такой страницы нет — вернитесь на главную."><meta property="og:url" content="https://mi-decor.art/404"><meta property="og:image" content="https://mi-decor.art/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:locale" content="ru_RU"><meta name="twitter:card" content="summary_large_image"><script>
+      // Проявление страницы при заходе — так было в исходной версии: контент скрыт
+      // 400 мс, затем проявляется за 0.2 с. Только при первом заходе в сессии и только
+      // на экранах шире 980px (за ширину отвечает медиазапрос в стилях).
+      //
+      // Скрипт обязан быть здесь, до разметки: иначе контент успеет мигнуть.
+      (function () {
+        var crawler =
+          /bot|google|yandex|baidu|bing|msn|duckduckbot|teoma|slurp|crawler|spider|robot|crawling|facebook/i;
+
+        if (crawler.test(navigator.userAgent)) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        try {
+          if (sessionStorage.getItem('visited') === 'y') return;
+        } catch (error) {
+          return;
+        }
+
+        var root = document.documentElement;
+        root.classList.add('is-entering');
+        // Стикеры на главной проявляются по очереди — их отсчёт начинается после
+        // того, как проявится сама страница, иначе первые проступят незаметно.
+        root.style.setProperty('--appear-base', '620ms');
+
+        document.addEventListener('DOMContentLoaded', function () {
+          setTimeout(function () {
+            root.classList.remove('is-entering');
+            try {
+              sessionStorage.setItem('visited', 'y');
+            } catch (error) {
+              // приватный режим — не беда
+            }
+          }, 400);
+        });
+      })();
+    </script><link rel="stylesheet" href="/_astro/Base.DnWrPg3p.css"><style>.lost[data-astro-cid-ibpinaeu]{text-align:center;padding:220px 20px 260px}.lost[data-astro-cid-ibpinaeu] h1[data-astro-cid-ibpinaeu]{color:var(--accent);letter-spacing:1.5px;margin:0 0 24px;font-size:36px;line-height:40px}.lost[data-astro-cid-ibpinaeu] p[data-astro-cid-ibpinaeu]{color:var(--paper);margin:0 0 12px;font-size:20px;line-height:31px}.ways[data-astro-cid-ibpinaeu] a[data-astro-cid-ibpinaeu]{color:var(--accent);font-weight:600}.ways[data-astro-cid-ibpinaeu] a[data-astro-cid-ibpinaeu]:hover{text-decoration:underline}@media (width<=479px){.lost[data-astro-cid-ibpinaeu]{padding:140px 20px 160px}.lost[data-astro-cid-ibpinaeu] h1[data-astro-cid-ibpinaeu]{font-size:30px;line-height:35px}}
+</style></head><body><a class="skip" href="#main">К основному содержанию</a><header class="bar" data-astro-cid-fzpbxy5g><a class="logo" href="/" aria-label="Мы.Decor — на главную" data-astro-cid-fzpbxy5g><img src="/_astro/logo.CZPF5A-__Z1PONXp.png" srcset="/_astro/logo.CZPF5A-__14IWoc.png 150w, /_astro/logo.CZPF5A-__Z1PONXp.png 300w" sizes="150px" width="300" height="113" alt="Мы.Decor" data-astro-cid-fzpbxy5g></a><button class="burger" type="button" aria-expanded="false" aria-controls="site-nav" data-astro-cid-fzpbxy5g><span class="burger-label" data-astro-cid-fzpbxy5g>Меню</span><span class="burger-lines" aria-hidden="true" data-astro-cid-fzpbxy5g><i data-astro-cid-fzpbxy5g></i><i data-astro-cid-fzpbxy5g></i><i data-astro-cid-fzpbxy5g></i></span></button><nav class="nav" id="site-nav" aria-label="Основное меню" data-astro-cid-fzpbxy5g><a href="/" data-astro-cid-fzpbxy5g>о нас</a><a href="/commande" data-astro-cid-fzpbxy5g>команда</a><a href="/project" data-astro-cid-fzpbxy5g>проекты</a><a href="/contact" data-astro-cid-fzpbxy5g>контакты</a></nav></header><script type="module">var e=document.querySelector(`.bar`),t=e?.querySelector(`.burger`),n=n=>{e.classList.toggle(`is-open`,n),t.setAttribute(`aria-expanded`,String(n))};t?.addEventListener(`click`,()=>{n(!e.classList.contains(`is-open`))}),document.addEventListener(`keydown`,r=>{r.key===`Escape`&&e?.classList.contains(`is-open`)&&(n(!1),t.focus())});</script><main id="main"><section class="lost" data-astro-cid-ibpinaeu><h1 data-astro-cid-ibpinaeu>Страница не найдена</h1><p data-astro-cid-ibpinaeu>Такой страницы нет. Возможно, адрес изменился.</p><p class="ways" data-astro-cid-ibpinaeu><a href="/" data-astro-cid-ibpinaeu>о нас</a><span aria-hidden="true" data-astro-cid-ibpinaeu> · </span><a href="/commande" data-astro-cid-ibpinaeu>команда</a><span aria-hidden="true" data-astro-cid-ibpinaeu> · </span><a href="/project" data-astro-cid-ibpinaeu>проекты</a><span aria-hidden="true" data-astro-cid-ibpinaeu> · </span><a href="/contact" data-astro-cid-ibpinaeu>контакты</a></p></section></main><footer class="foot board" style="--bh-w1440:258px;--bh-w1100:258px;--bh-w800:258px;--bh-w560:258px;--bh-w375:258px" data-astro-cid-nns7i3if><p class="placed foot-copyright" style="--x-w1440:20px;--y-w1440:202px;--w-w1440:186px;--a-w1440:left;--fs-w1440:20px;--lh-w1440:31px;--x-w1100:70px;--y-w1100:202px;--w-w1100:186px;--a-w1100:left;--fs-w1100:20px;--lh-w1100:31px;--x-w800:39px;--y-w800:22px;--w-w800:186px;--a-w800:left;--fs-w800:20px;--lh-w800:31px;--x-w560:136px;--y-w560:19px;--w-w560:207px;--a-w560:center;--fs-w560:20px;--lh-w560:31px;--x-w375:91px;--y-w375:14px;--w-w375:138px;--a-w375:center;--fs-w375:20px;--lh-w375:31px" data-astro-cid-nns7i3if><span data-astro-cid-nns7i3if>© 2026</span></p><p class="placed foot-legal" style="--x-w1440:-100px;--y-w1440:202px;--w-w1440:1400px;--a-w1440:center;--fs-w1440:20px;--lh-w1440:31px;--x-w1100:-32px;--y-w1100:202px;--w-w1100:1023px;--a-w1100:center;--fs-w1100:20px;--lh-w1100:31px;--x-w800:0px;--y-w800:22px;--w-w800:640px;--a-w800:center;--fs-w800:20px;--lh-w800:31px;--x-w560:0px;--y-w560:50px;--w-w560:480px;--a-w560:center;--fs-w560:20px;--lh-w560:31px;--x-w375:69px;--y-w375:45px;--w-w375:189px;--a-w375:center;--fs-w375:20px;--lh-w375:31px" data-astro-cid-nns7i3if><span data-astro-cid-nns7i3if>ИНН 772987616137 | tg sasha_decor</span></p><p class="placed foot-credit" style="--x-w1440:995px;--y-w1440:202px;--w-w1440:186px;--a-w1440:right;--fs-w1440:20px;--lh-w1440:31px;--x-w1100:709px;--y-w1100:203px;--w-w1100:186px;--a-w1100:right;--fs-w1100:20px;--lh-w1100:31px;--x-w800:413px;--y-w800:215px;--w-w800:186px;--a-w800:right;--fs-w800:20px;--lh-w800:31px;--x-w560:136px;--y-w560:207px;--w-w560:207px;--a-w560:center;--fs-w560:20px;--lh-w560:31px;--x-w375:91px;--y-w375:214px;--w-w375:138px;--a-w375:center;--fs-w375:20px;--lh-w375:31px" data-astro-cid-nns7i3if><span data-astro-cid-nns7i3if>by @DariaLit</span></p></footer></body></html>
