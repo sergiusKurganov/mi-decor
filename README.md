@@ -102,27 +102,37 @@ node tools/weigh.mjs dist /index.html 1440   # сколько качает бр�
 
 ## Как выкладывается
 
-Сейчас выкладка ручная:
+Push в `main` запускает `.github/workflows/deploy.yml`: сборка и выкладка на GitHub
+Pages. Домен привязан файлом `public/CNAME`, A-записи смотрят на адреса GitHub Pages,
+`www` — CNAME на `sergiuskurganov.github.io`.
+
+**Если прогон упал с `startup_failure`** («the job was not started because it repeatedly
+failed to be acquired») — это не про наш код, GitHub не смог выдать раннер. Перезапуск
+того же прогона в таком случае не помогает: нужен новый запуск.
 
 ```bash
-npm run deploy
+gh api -X POST repos/sergiusKurganov/mi-decor/actions/workflows/deploy.yml/dispatches -f ref=main
 ```
 
-Команда собирает сайт и кладёт готовую сборку в ветку `gh-pages`, откуда её отдаёт
-GitHub Pages. Внутри сборки обязателен файл `.nojekyll`: без него Pages прогоняет
-сайт через Jekyll, а тот пропускает папки, начинающиеся с подчёркивания, — то есть
-весь `/_astro` со стилями и картинками.
+Команда может вернуть 500 и при этом сработать — проверяйте по списку прогонов,
+а не по её ответу.
 
-В репозитории лежит и автоматическая выкладка — `.github/workflows/deploy.yml`,
-она запускается на push в `main`. Чтобы включить её обратно, надо переставить
-источник Pages с ветки на Actions:
+**Если Actions лежат совсем,** есть запасной путь — выложить сборку напрямую:
 
 ```bash
+npm run deploy      # собирает и кладёт сборку в ветку gh-pages
+```
+
+Тогда нужно переставить источник Pages на ветку, а потом вернуть обратно:
+
+```bash
+gh api -X PUT repos/sergiusKurganov/mi-decor/pages -f build_type=legacy -f 'source[branch]=gh-pages' -f 'source[path]=/'
 gh api -X PUT repos/sergiusKurganov/mi-decor/pages -f build_type=workflow
 ```
 
-Домен привязан файлом `public/CNAME`, A-записи смотрят на адреса GitHub Pages,
-`www` — CNAME на `sergiuskurganov.github.io`.
+В сборке обязателен файл `.nojekyll`: без него Pages прогоняет сайт через Jekyll,
+а тот пропускает папки, начинающиеся с подчёркивания, — то есть весь `/_astro`.
+`npm run deploy` кладёт его сам.
 
 ## Что важно знать
 
