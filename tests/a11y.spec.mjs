@@ -87,6 +87,13 @@ test('меню на телефоне открывается с клавиату�
   await expect(nav).toBeVisible();
   await expect(burger).toHaveAttribute('aria-expanded', 'true');
 
+  // Меню должно раскрываться прямо под шапкой. Проверка на глаз «видно ли его»
+  // такое не ловит: уехавшее к низу страницы меню тоже «видно».
+  const bar = await page.locator('.bar').boundingBox();
+  const list = await nav.boundingBox();
+  expect(Math.abs(list.y - (bar.y + bar.height))).toBeLessThan(2);
+  expect(list.y).toBeLessThan(page.viewportSize().height);
+
   // В открытом состоянии разметка другая — проверяем и её.
   const report = await audit(page);
   show('открытое меню', report);
