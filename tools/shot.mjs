@@ -1,0 +1,10 @@
+import { chromium } from '@playwright/test';
+const b = await chromium.launch();
+const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
+await p.goto('http://localhost:8765' + (process.argv[2] ?? '/'));
+await p.waitForLoadState('load');
+await p.waitForTimeout(3000);
+await p.screenshot({ path: process.argv[3], fullPage: true });
+console.log('  снято:', await p.evaluate(() => document.body.scrollHeight) + 'px');
+console.log('  текст подвала:', await p.evaluate(() => document.querySelector('.foot p')?.textContent));
+await b.close();

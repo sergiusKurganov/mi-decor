@@ -1,0 +1,130 @@
+/* Механизм позиционирования из исходного дизайна.
+ *
+ * Дизайн свёрстан пятью центрированными контейнерами: 1200 / 960 / 640 / 480 / 320.
+ * Внутри контейнера у элемента постоянные координаты, поэтому позиция считается как
+ * calc(50% - design/2 + x) и остаётся верной на любой ширине окна, а не только там,
+ * где замеряли. Ничего не масштабируется: размеры шрифта одинаковы на всех ширинах.
+ *
+ * Координаты приходят из src/data/*.json инлайновыми переменными --x-w1440 и так далее,
+ * а медиазапросы ниже выбирают нужный набор. Так числа лежат в данных, а не в стилях.
+ */
+
+.board {
+  position: relative;
+  height: var(--board-height);
+  --design: 1200px;
+  --board-height: var(--bh-w1440);
+}
+
+.placed {
+  position: absolute;
+  left: calc(50% - var(--design) / 2 + var(--px));
+  top: var(--py);
+  width: var(--pw);
+  --px: var(--x-w1440);
+  --py: var(--y-w1440);
+  --pw: var(--w-w1440);
+  --ph: var(--h-w1440);
+  --protate: var(--r-w1440, 0deg);
+  --palign: var(--a-w1440, left);
+  --pfs: var(--fs-w1440, inherit);
+  --plh: var(--lh-w1440, inherit);
+  --pls: var(--ls-w1440, inherit);
+  --ptt: var(--tt-w1440, none);
+  --pbgs: var(--bgs-w1440, auto);
+  --pbgp: var(--bgp-w1440, 50% 50%);
+  --pbgc: var(--bgc-w1440, transparent);
+  text-align: var(--palign);
+  font-size: var(--pfs);
+  line-height: var(--plh);
+  letter-spacing: var(--pls);
+  text-transform: var(--ptt);
+  background-size: var(--pbgs);
+  background-position: var(--pbgp);
+  background-color: var(--pbgc);
+  background-repeat: no-repeat;
+}
+
+.placed > * {
+  transform: rotate(var(--protate));
+}
+
+.placed--sized {
+  height: var(--ph);
+}
+
+@media (max-width: 1199px) {
+  .board { --design: 960px; --board-height: var(--bh-w1100); }
+  .placed {
+    --px: var(--x-w1100);
+    --py: var(--y-w1100);
+    --pw: var(--w-w1100);
+    --ph: var(--h-w1100);
+    --protate: var(--r-w1100, 0deg);
+    --palign: var(--a-w1100, left);
+    --pfs: var(--fs-w1100, inherit);
+    --plh: var(--lh-w1100, inherit);
+    --pls: var(--ls-w1100, inherit);
+    --ptt: var(--tt-w1100, none);
+    --pbgs: var(--bgs-w1100, auto);
+    --pbgp: var(--bgp-w1100, 50% 50%);
+    --pbgc: var(--bgc-w1100, transparent);
+  }
+}
+
+@media (max-width: 959px) {
+  .board { --design: 640px; --board-height: var(--bh-w800); }
+  .placed {
+    --px: var(--x-w800);
+    --py: var(--y-w800);
+    --pw: var(--w-w800);
+    --ph: var(--h-w800);
+    --protate: var(--r-w800, 0deg);
+    --palign: var(--a-w800, left);
+    --pfs: var(--fs-w800, inherit);
+    --plh: var(--lh-w800, inherit);
+    --pls: var(--ls-w800, inherit);
+    --ptt: var(--tt-w800, none);
+    --pbgs: var(--bgs-w800, auto);
+    --pbgp: var(--bgp-w800, 50% 50%);
+    --pbgc: var(--bgc-w800, transparent);
+  }
+}
+
+@media (max-width: 639px) {
+  .board { --design: 480px; --board-height: var(--bh-w560); }
+  .placed {
+    --px: var(--x-w560);
+    --py: var(--y-w560);
+    --pw: var(--w-w560);
+    --ph: var(--h-w560);
+    --protate: var(--r-w560, 0deg);
+    --palign: var(--a-w560, left);
+    --pfs: var(--fs-w560, inherit);
+    --plh: var(--lh-w560, inherit);
+    --pls: var(--ls-w560, inherit);
+    --ptt: var(--tt-w560, none);
+    --pbgs: var(--bgs-w560, auto);
+    --pbgp: var(--bgp-w560, 50% 50%);
+    --pbgc: var(--bgc-w560, transparent);
+  }
+}
+
+@media (max-width: 479px) {
+  .board { --design: 320px; --board-height: var(--bh-w375); }
+  .placed {
+    --px: var(--x-w375);
+    --py: var(--y-w375);
+    --pw: var(--w-w375);
+    --ph: var(--h-w375);
+    --protate: var(--r-w375, 0deg);
+    --palign: var(--a-w375, left);
+    --pfs: var(--fs-w375, inherit);
+    --plh: var(--lh-w375, inherit);
+    --pls: var(--ls-w375, inherit);
+    --ptt: var(--tt-w375, none);
+    --pbgs: var(--bgs-w375, auto);
+    --pbgp: var(--bgp-w375, 50% 50%);
+    --pbgc: var(--bgc-w375, transparent);
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "title": "Контакты",
+  "description": "Связаться с Мы.Decor: Александра +7 985 974 9223, Ольга +7 903 788 3161, телеграм sasha_decor.",
+  "heading": "Контакты",
+  "people": [
+    {
+      "name": "Александра",
+      "phone": "+7 985 974 9223",
+      "telegram": "sasha_decor"
+    },
+    {
+      "name": "Ольга",
+      "phone": "+7 903 788 3161"
+    }
+  ],
+  "telegram": {
+    "handle": "sasha_decor",
+    "url": "https://t.me/sasha_decor"
+  }
+}

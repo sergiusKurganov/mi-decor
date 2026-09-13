@@ -1,0 +1,165 @@
+---
+import Base from '../layouts/Base.astro';
+import home from '../data/home.json';
+import { sticker } from '../lib/images';
+import { spotVars, boardVars, sizesFor, widthsFor } from '../lib/placement';
+import { responsive } from '../lib/optimize';
+import { rich } from '../lib/rich';
+
+const { title, heading, description, collage, tooltip, intro } = home;
+
+const stickers = await Promise.all(
+  collage.stickers.map(async (item) => {
+    const source = await sticker(item.file);
+    return {
+      ...item,
+      image: await responsive(source, widthsFor(item.at, source.width)),
+      sizes: sizesFor(item.at),
+    };
+  }),
+);
+---
+
+<Base title={title} description={description}>
+  <h1 class="visually-hidden">{heading}</h1>
+
+  <section class="board collage" style={boardVars(collage.heights)}>
+    {stickers.map((item, index) => (
+      <div
+        class="placed"
+        style={`${spotVars(item.at)};z-index:${item.z};--appear-step:${index * 70}ms`}
+        data-parallax={item.parallax}
+      >
+        <img
+          src={item.image.src}
+          srcset={item.image.srcset}
+          sizes={item.sizes}
+          width={item.image.width}
+          height={item.image.height}
+          alt={item.alt}
+          decoding="async"
+        />
+      </div>
+    ))}
+
+    <div
+      class="placed placed--sized dot"
+      style={`${spotVars(tooltip.at)};background-color:${tooltip.background}`}
+    >
+      <span class="visually-hidden">{tooltip.text}</span>
+    </div>
+  </section>
+
+  <section class="board pitch" style={boardVars(intro.heights)}>
+    <p class="placed text" style={spotVars(intro.at)} set:html={rich(intro.text)} />
+
+    <div class="placed placed--sized" style={spotVars(intro.cta.at)}>
+      <a class="cta" href={intro.cta.href}>{intro.cta.label}</a>
+    </div>
+  </section>
+</Base>
+
+<script>
+  // Параллакс стикеров: помеченные в данных отстают от прокрутки.
+  //
+  // Силу 140 из данных читаем как «14% от прокрутки»: делитель ниже — единственная
+  // ручка, если движение покажется слишком сильным или слабым.
+  const DIVISOR = 1000;
+
+  const items = [...document.querySelectorAll('[data-parallax]')].map((el) => ({
+    el,
+    rate: (Number(el.dataset.parallax) || 0) / DIVISOR,
+  }));
+
+  const board = document.querySelector('.collage');
+  const calm = matchMedia('(prefers-reduced-motion: reduce)');
+
+  if (items.length > 0 && board && !calm.matches) {
+    let scheduled = false;
+
+    const apply = () => {
+      scheduled = false;
+      // Дальше своей высоты коллаж не уезжает: ниже он уже за пределами экрана.
+      const scrolled = Math.min(window.scrollY, board.offsetHeight);
+
+      for (const { el, rate } of items) {
+        const shift = -scrolled * rate;
+        // Пустая строка, а не translate(0): на нулевой позиции трансформа нет вовсе,
+        // и отрисовка совпадает с эталоном до пикселя.
+        el.style.transform = shift ? `translate3d(0, ${shift.toFixed(2)}px, 0)` : '';
+      }
+    };
+
+    addEventListener(
+      'scroll',
+      () => {
+        if (!scheduled) {
+          scheduled = true;
+          requestAnimationFrame(apply);
+        }
+      },
+      { passive: true },
+    );
+
+    apply();
+  }
+</script>
+
+<style>
+  .collage img {
+    width: 100%;
+    height: auto;
+  }
+
+  /* Стикеры проявляются по очереди, в том же порядке, в котором уложены слоями.
+     Шаг задаётся инлайном (--appear-step), общий сдвиг — скриптом в head, чтобы
+     отсчёт начался после проявления самой страницы.
+
+     Анимация, а не переход: с fill-mode both элемент остаётся скрытым до своей
+     очереди и не требует JS. Прозрачность, а не transform: transform на .placed
+     занят параллаксом, а на вложенном элементе — поворотом стикера. */
+  .collage .placed {
+    animation: sticker-in 320ms ease-out both;
+    animation-delay: calc(var(--appear-base, 0ms) + var(--appear-step, 0ms));
+  }
+
+  @keyframes sticker-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Кружок с подсказкой у нижнего края коллажа. В эталоне текст показывался только
+     при наведении; здесь он всегда доступен скринридеру. */
+  .dot {
+    border-radius: 1000px;
+  }
+
+  .text {
+    margin: 0;
+    color: var(--paper);
+  }
+
+  .text :global(strong) {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    border: 5px solid var(--accent);
+    border-radius: 30px;
+    background: var(--ink);
+    color: var(--paper);
+    font-weight: 600;
+  }
+</style>

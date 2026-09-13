@@ -1,0 +1,112 @@
+---
+import Base from '../layouts/Base.astro';
+import team from '../data/team.json';
+import { getImage } from 'astro:assets';
+import { teamPhoto } from '../lib/images';
+import { spotVars, boardVars } from '../lib/placement';
+import { rich } from '../lib/rich';
+
+const { title, description, headline, blocks, labels } = team;
+
+// Фотографии показываются максимум в 459px, поэтому храним 1x и 2x, а не исходные
+// 1680px. Они заданы фоном, и srcset тут не работает — плотность выбирает image-set.
+const SHOWN = 459;
+
+const photos = new Map<string, { one: string; two: string }>();
+
+for (const block of blocks) {
+  for (const person of block.people) {
+    if (!person.photo || photos.has(person.photo)) continue;
+
+    const source = await teamPhoto(person.photo);
+    const [one, two] = await Promise.all([
+      getImage({ src: source, width: SHOWN, format: 'webp', quality: 80 }),
+      getImage({ src: source, width: SHOWN * 2, format: 'webp', quality: 80 }),
+    ]);
+
+    photos.set(person.photo, { one: one.src, two: two.src });
+  }
+}
+---
+
+<Base title={title} description={description}>
+  <section class="board headline" style={boardVars(headline.heights)}>
+    <h1 class="placed title" style={spotVars(headline.title.at)}>{headline.title.text}</h1>
+    <p class="placed intro" style={spotVars(headline.intro.at)} set:html={rich(headline.intro.text)} />
+  </section>
+
+  {blocks.map((block) => (
+    <section class="board row" style={boardVars(block.heights)}>
+      {block.people.map((person) => {
+        const image = person.photo ? photos.get(person.photo) : null;
+
+        return (
+          <>
+            <div
+              class="placed placed--sized photo"
+              style={[
+                spotVars(person.photoAt),
+                // Первое объявление — запас для браузеров без image-set.
+                image && `background-image:url(${image.one})`,
+                image && `background-image:image-set(url(${image.one}) 1x,url(${image.two}) 2x)`,
+              ]
+                .filter(Boolean)
+                .join(';')}
+              role="img"
+              aria-label={`Фото: ${person.name}`}
+            />
+
+            <h2 class="placed name" style={spotVars(person.nameAt)}>{person.name}</h2>
+
+            <p class="placed role" style={spotVars(person.roleAt)}>
+              <strong>{labels.role} </strong>{person.role}<br />
+              <strong>{labels.speciality} </strong>{person.speciality}<br />
+              <strong>{labels.since} </strong>{person.since}
+            </p>
+          </>
+        );
+      })}
+    </section>
+  ))}
+</Base>
+
+<style>
+  .title,
+  .name,
+  .intro,
+  .role {
+    margin: 0;
+  }
+
+  .title {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .intro {
+    color: var(--paper);
+  }
+
+  .name {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .role {
+    color: var(--paper);
+  }
+
+  /* Подписи полей и акценты в тексте — розовым, как в эталоне. */
+  .intro :global(strong),
+  .role strong {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* Фотографии остаются фоном: каждую обрезали руками своим масштабом и позицией,
+     повторить это тегом img нельзя. Подпись для скринридера даём через role и
+     aria-label — в эталоне её не было вовсе. */
+  .photo {
+    overflow: hidden;
+  }
+</style>

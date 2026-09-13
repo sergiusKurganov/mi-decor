@@ -1,0 +1,57 @@
+---
+import Base from '../layouts/Base.astro';
+import projects from '../data/projects.json';
+import { clientLogo } from '../lib/images';
+import { spotVars, boardVars, sizesFor, widthsFor } from '../lib/placement';
+import { responsive } from '../lib/optimize';
+
+const { title, description, heading, wall } = projects;
+
+const logos = await Promise.all(
+  wall.logos.map(async (logo) => {
+    const source = await clientLogo(logo.file);
+    return {
+      ...logo,
+      image: await responsive(source, widthsFor(logo.at, source.width)),
+      sizes: sizesFor(logo.at),
+    };
+  }),
+);
+---
+
+<Base title={title} description={description}>
+  <h1 class="visually-hidden">{title}</h1>
+
+  <section class="board headline" style={boardVars(heading.heights)}>
+    <h2 class="placed" style={spotVars(heading.at)}>{heading.text}</h2>
+  </section>
+
+  <section class="board wall" style={boardVars(wall.heights)} aria-label="Логотипы клиентов">
+    {logos.map((logo) => (
+      <div class="placed" style={`${spotVars(logo.at)};z-index:${logo.z}`}>
+        <img
+          src={logo.image.src}
+          srcset={logo.image.srcset}
+          sizes={logo.sizes}
+          width={logo.image.width}
+          height={logo.image.height}
+          alt={`Логотип: ${logo.client}`}
+          decoding="async"
+        />
+      </div>
+    ))}
+  </section>
+</Base>
+
+<style>
+  .headline h2 {
+    margin: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .wall img {
+    width: 100%;
+    height: auto;
+  }
+</style>

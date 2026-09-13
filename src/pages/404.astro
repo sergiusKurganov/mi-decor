@@ -1,0 +1,62 @@
+---
+import Base from '../layouts/Base.astro';
+import site from '../data/site.json';
+
+---
+
+<Base title="Страница не найдена" description="Такой страницы нет — вернитесь на главную.">
+  <section class="lost">
+    <h1>Страница не найдена</h1>
+    <p>Такой страницы нет. Возможно, адрес изменился.</p>
+    <p class="ways">
+      {site.nav.map(({ label, href }, index) => (
+        <>
+          {index > 0 && <span aria-hidden="true"> · </span>}
+          <a href={href}>{label}</a>
+        </>
+      ))}
+    </p>
+  </section>
+</Base>
+
+<style>
+  .lost {
+    padding: 220px 20px 260px;
+    text-align: center;
+  }
+
+  .lost h1 {
+    margin: 0 0 24px;
+    color: var(--accent);
+    font-size: 36px;
+    line-height: 40px;
+    letter-spacing: 1.5px;
+  }
+
+  .lost p {
+    margin: 0 0 12px;
+    color: var(--paper);
+    font-size: 20px;
+    line-height: 31px;
+  }
+
+  .ways a {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .ways a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 479px) {
+    .lost {
+      padding: 140px 20px 160px;
+    }
+
+    .lost h1 {
+      font-size: 30px;
+      line-height: 35px;
+    }
+  }
+</style>

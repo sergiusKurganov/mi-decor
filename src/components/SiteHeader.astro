@@ -1,0 +1,186 @@
+---
+import logo from '../assets/logo.png';
+import { responsive } from '../lib/optimize';
+import site from '../data/site.json';
+import { cleanPath } from '../lib/paths';
+
+const here = cleanPath(Astro.url.pathname);
+
+// Логотип показывается в 150px, а в файле 1680. Оставляем PNG: это двухцветная
+// графика, на которой сжатие с потерями заметно на краях букв.
+const mark = await responsive(logo, [150, 300], { format: 'png' });
+---
+
+<header class="bar">
+  <a class="logo" href="/" aria-label={`${site.name} — на главную`}>
+    <img
+      src={mark.src}
+      srcset={mark.srcset}
+      sizes="150px"
+      width={mark.width}
+      height={mark.height}
+      alt={site.name}
+    />
+  </a>
+
+  <button class="burger" type="button" aria-expanded="false" aria-controls="site-nav">
+    <span class="burger-label">Меню</span>
+    <span class="burger-lines" aria-hidden="true"><i></i><i></i><i></i></span>
+  </button>
+
+  <nav class="nav" id="site-nav" aria-label="Основное меню">
+    {site.nav.map(({ label, href }) => (
+      <a href={href} aria-current={here === href ? 'page' : undefined}>{label}</a>
+    ))}
+  </nav>
+</header>
+
+<script>
+  const bar = document.querySelector('.bar');
+  const burger = bar?.querySelector('.burger');
+
+  const setOpen = (open) => {
+    bar.classList.toggle('is-open', open);
+    burger.setAttribute('aria-expanded', String(open));
+  };
+
+  burger?.addEventListener('click', () => {
+    setOpen(!bar.classList.contains('is-open'));
+  });
+
+  // Escape закрывает меню и возвращает фокус на кнопку — иначе с клавиатуры
+  // из открытого меню не выйти.
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && bar?.classList.contains('is-open')) {
+      setOpen(false);
+      burger.focus();
+    }
+  });
+</script>
+
+<style>
+  .bar {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--header-height);
+    padding: 0 var(--gutter);
+    background: var(--ink);
+  }
+
+  .logo img {
+    width: var(--logo-width);
+    height: auto;
+  }
+
+  .nav {
+    display: flex;
+    gap: var(--nav-gap);
+  }
+
+  .nav a {
+    position: relative;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* Текущую страницу в эталоне помечает подчёркивание 2px, опущенное на 2px. */
+  .nav a[aria-current='page'] {
+    font-weight: 700;
+  }
+
+  .nav a[aria-current='page']::after,
+  .nav a:hover::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    border-bottom: 2px solid var(--accent);
+  }
+
+  .burger {
+    display: none;
+  }
+
+  /* Ниже 1201px боковые отступы в эталоне сжимаются с 40 до 20. */
+  @media (max-width: 1200px) {
+    .bar {
+      padding: 0 var(--gutter-narrow);
+    }
+  }
+
+  /* Узкий экран: шапка встаёт в поток, меню уходит под бургер. */
+  @media (max-width: 980px) {
+    .bar {
+      position: static;
+      align-items: flex-start;
+      /* Высоту задают логотип и отступы — так она совпадает с эталоном без подгонки. */
+      height: auto;
+      padding: var(--gutter-narrow);
+    }
+
+    .burger {
+      display: block;
+      position: relative;
+      width: 42px;
+      height: 32px;
+      margin-top: 12.3px;
+      padding: 0;
+      border: 0;
+      background: none;
+      cursor: pointer;
+    }
+
+    .burger-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    /* Полоски позиционируем от самой кнопки: у вложенной обёртки высота коробки
+       зависела от межстрочного расстояния и давала сдвиг на полпиксела. */
+    .burger-lines {
+      position: absolute;
+      inset: 0;
+    }
+
+    .burger-lines i {
+      position: absolute;
+      left: 0;
+      width: 42px;
+      height: 5px;
+      background: var(--accent);
+    }
+
+    .burger-lines i:nth-child(1) { top: 0; }
+    .burger-lines i:nth-child(2) { top: 13px; }
+    .burger-lines i:nth-child(3) { top: 26px; }
+
+    .nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      gap: 24px;
+      padding: 24px var(--gutter-narrow) 32px;
+      background: var(--ink);
+    }
+
+    .bar.is-open .nav {
+      display: flex;
+    }
+
+    .bar.is-open .burger-lines i:nth-child(1) { transform: translateY(13px) rotate(45deg); }
+    .bar.is-open .burger-lines i:nth-child(2) { opacity: 0; }
+    .bar.is-open .burger-lines i:nth-child(3) { transform: translateY(-13px) rotate(-45deg); }
+  }
+</style>

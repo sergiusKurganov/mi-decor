@@ -1,0 +1,98 @@
+---
+import Base from '../layouts/Base.astro';
+import contact from '../data/contact.json';
+import telegramIcon from '../assets/icons/telegram.svg?raw';
+
+const { title, description, heading, people, telegram } = contact;
+
+/** Телефон в вид, пригодный для tel: — только плюс и цифры. */
+const dial = (phone: string) => phone.replace(/[^\d+]/g, '');
+---
+
+<Base title={title} description={description}>
+  <section class="contacts">
+    <h1 class="visually-hidden">{heading}</h1>
+
+    <div class="card">
+      {people.map((person, index) => (
+        <>
+          {index > 0 && <br />}
+          <strong>{person.name}</strong><span class="spacer"> </span><br />
+          <a class="plain" href={`tel:${dial(person.phone)}`}>{person.phone}</a><br />
+          {person.telegram && (
+            <><a class="plain" href={telegram.url}>{person.telegram}</a><br /></>
+          )}
+        </>
+      ))}
+    </div>
+
+    <p class="social">
+      <a href={telegram.url} aria-label="Телеграм" rel="noopener" set:html={telegramIcon} />
+    </p>
+  </section>
+</Base>
+
+<style>
+  .contacts {
+    padding: 180px 0 150px;
+  }
+
+  /* Ширина текстового блока повторяет сетку эталона: 560 → 460 → 600 → на всю
+     ширину минус отступы. Точки переключения проверены проходом по диапазону,
+     первая — ровно 1201px. */
+  .card {
+    width: 560px;
+    margin: 0 auto;
+    color: #fffbfd;
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 1.23;
+    text-align: center;
+  }
+
+  @media (max-width: 1200px) { .card { width: 460px; } }
+  @media (max-width: 959px)  { .card { width: 600px; } }
+  @media (max-width: 639px)  { .card { width: calc(100% - 40px); } }
+
+  .card strong {
+    font-weight: 700;
+  }
+
+  /* В эталоне после имени стоит пробел отдельным элементом. Он ни на что не влияет
+     при выключке по центру, но лишняя строка появилась бы без него. */
+  .card .spacer {
+    font-weight: 600;
+  }
+
+  /* Телефоны и телеграм в эталоне были просто текстом. Делаем их ссылками, но
+     внешне не отличимыми: цвет и подчёркивание не меняем, вёрстка не сдвигается. */
+  .card .plain {
+    color: inherit;
+    font-weight: 400;
+    text-decoration: none;
+  }
+
+  /* Флексом, а не inline-block: у строчного элемента высота коробки зависит от
+     выносных элементов шрифта и уезжает на 4px. */
+  .social {
+    display: flex;
+    justify-content: center;
+    margin: 49px 0 0;
+  }
+
+  .social a {
+    width: 30px;
+    height: 30px;
+    color: var(--accent);
+  }
+
+  .social :global(svg) {
+    display: block;
+  }
+
+  @media (max-width: 479px) {
+    .contacts {
+      padding: 120px 0 90px;
+    }
+  }
+</style>

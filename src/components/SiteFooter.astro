@@ -1,0 +1,30 @@
+---
+import footer from '../data/footer.json';
+import { spotVars, boardVars } from '../lib/placement';
+
+const { heights, parts } = footer;
+---
+
+<footer class="foot board" style={boardVars(heights)}>
+  {Object.entries(parts).map(([key, part]) => (
+    <p class={`placed foot-${key}`} style={spotVars(part.at)}>
+      <span>{part.text}</span>
+    </p>
+  ))}
+</footer>
+
+<style>
+  .foot {
+    background: var(--ink);
+    color: var(--accent);
+  }
+
+  .foot p {
+    margin: 0;
+  }
+
+  /* Повороты в футере не нужны, а span добавлен только для единообразия с коллажем. */
+  .foot p > span {
+    display: block;
+  }
+</style>

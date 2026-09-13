@@ -1,0 +1,90 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--ink);
+}
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: 'Roboto', Arial, sans-serif;
+  font-size: 16px;
+  line-height: normal;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* Проявление при заходе. Класс на корне ставит и снимает скрипт в head; ширину
+   гейтит медиазапрос, поэтому на телефоне ничего не мигает. */
+@media (min-width: 980px) {
+  body {
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  .is-entering body {
+    opacity: 0;
+  }
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Скрыто визуально, но доступно скринридеру — и не влияет на вёрстку. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Ссылка в обход шапки: не видна, пока на неё не встанет фокус с клавиатуры,
+   поэтому на вёрстку и скриншоты не влияет. */
+.skip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  padding: 12px 20px;
+  transform: translateY(-120%);
+  background: var(--accent);
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.skip:focus {
+  transform: translateY(0);
+}
+
+/* Видимый фокус: в исходной вёрстке его не было, добавляем. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

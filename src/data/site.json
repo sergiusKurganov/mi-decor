@@ -1,0 +1,35 @@
+{
+  "name": "Мы.Decor",
+  "domain": "https://mi-decor.art",
+  "nav": [
+    {
+      "label": "о нас",
+      "href": "/"
+    },
+    {
+      "label": "команда",
+      "href": "/commande"
+    },
+    {
+      "label": "проекты",
+      "href": "/project"
+    },
+    {
+      "label": "контакты",
+      "href": "/contact"
+    }
+  ],
+  "contacts": {
+    "telegram": "sasha_decor",
+    "people": [
+      {
+        "name": "Александра",
+        "phone": "+7 985 974 9223"
+      },
+      {
+        "name": "Ольга",
+        "phone": "+7 903 788 3161"
+      }
+    ]
+  }
+}

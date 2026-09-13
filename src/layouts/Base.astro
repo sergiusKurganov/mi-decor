@@ -1,0 +1,88 @@
+---
+import '../styles/tokens.css';
+import '../styles/fonts.css';
+import '../styles/base.css';
+import '../styles/placed.css';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import site from '../data/site.json';
+import { cleanPath } from '../lib/paths';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = '' } = Astro.props;
+const canonical = new URL(cleanPath(Astro.url.pathname), site.domain).href;
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL('/og.png', site.domain).href} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script is:inline>
+      // Проявление страницы при заходе — так было в исходной версии: контент скрыт
+      // 400 мс, затем проявляется за 0.2 с. Только при первом заходе в сессии и только
+      // на экранах шире 980px (за ширину отвечает медиазапрос в стилях).
+      //
+      // Скрипт обязан быть здесь, до разметки: иначе контент успеет мигнуть.
+      (function () {
+        var crawler =
+          /bot|google|yandex|baidu|bing|msn|duckduckbot|teoma|slurp|crawler|spider|robot|crawling|facebook/i;
+
+        if (crawler.test(navigator.userAgent)) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        try {
+          if (sessionStorage.getItem('visited') === 'y') return;
+        } catch (error) {
+          return;
+        }
+
+        var root = document.documentElement;
+        root.classList.add('is-entering');
+        // Стикеры на главной проявляются по очереди — их отсчёт начинается после
+        // того, как проявится сама страница, иначе первые проступят незаметно.
+        root.style.setProperty('--appear-base', '620ms');
+
+        document.addEventListener('DOMContentLoaded', function () {
+          setTimeout(function () {
+            root.classList.remove('is-entering');
+            try {
+              sessionStorage.setItem('visited', 'y');
+            } catch (error) {
+              // приватный режим — не беда
+            }
+          }, 400);
+        });
+      })();
+    </script>
+  </head>
+
+  <body>
+    <a class="skip" href="#main">К основному содержанию</a>
+    <SiteHeader />
+    <main id="main">
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>
