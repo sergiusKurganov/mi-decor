@@ -102,9 +102,27 @@ node tools/weigh.mjs dist /index.html 1440   # сколько качает бр�
 
 ## Как выкладывается
 
-Каждый push в `main` запускает `.github/workflows/deploy.yml`: сборка и выкладка на
-GitHub Pages. Домен привязан файлом `public/CNAME`, A-записи домена смотрят на адреса
-GitHub Pages, `www` — CNAME на `sergiuskurganov.github.io`.
+Сейчас выкладка ручная:
+
+```bash
+npm run deploy
+```
+
+Команда собирает сайт и кладёт готовую сборку в ветку `gh-pages`, откуда её отдаёт
+GitHub Pages. Внутри сборки обязателен файл `.nojekyll`: без него Pages прогоняет
+сайт через Jekyll, а тот пропускает папки, начинающиеся с подчёркивания, — то есть
+весь `/_astro` со стилями и картинками.
+
+В репозитории лежит и автоматическая выкладка — `.github/workflows/deploy.yml`,
+она запускается на push в `main`. Чтобы включить её обратно, надо переставить
+источник Pages с ветки на Actions:
+
+```bash
+gh api -X PUT repos/sergiusKurganov/mi-decor/pages -f build_type=workflow
+```
+
+Домен привязан файлом `public/CNAME`, A-записи смотрят на адреса GitHub Pages,
+`www` — CNAME на `sergiuskurganov.github.io`.
 
 ## Что важно знать
 

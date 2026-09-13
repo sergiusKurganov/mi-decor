@@ -13,7 +13,8 @@
     "serve:dist": "node tools/serve.mjs dist 8765",
     "test:a11y": "playwright test tests/a11y.spec.mjs",
     "test": "playwright test",
-    "test:content": "playwright test tests/content.spec.mjs --project=w1440"
+    "test:content": "playwright test tests/content.spec.mjs --project=w1440",
+    "deploy": "npm run build && node tools/deploy-branch.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.50.0",
